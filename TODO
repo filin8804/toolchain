@@ -1,0 +1,6 @@
+- add shebang rewriter binary that takes everything
+  a set of paths (by default, that would be under
+  /bin and /libexec/git/git-core) and rewrites them
+  to be relative to the toolchain root
+- add prebuilt static perl binary from relocatable perl binary
+- add portable git binary
