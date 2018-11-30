@@ -1,6 +1,50 @@
-- add shebang rewriter binary that takes everything
-  a set of paths (by default, that would be under
-  /bin and /libexec/git/git-core) and rewrites them
-  to be relative to the toolchain root
+- add a mechanism to invoke scripts (i.e. shebang style
+  scripts) but with the interpreter at a relative location;
+  ideas:
+  1. add shebang rewriter binary that takes everything
+     a set of paths (by default, that would be under
+     /bin and /libexec/git/git-core) and rewrites them
+     to be relative to the toolchain root
+  2. alternatively, aside from shebang rewriting, we can
+     a) move the script to a known location
+     b) add a symlink (of the same name as the script)
+        to a binary that knows where the interpreters
+        are stored
 - add prebuilt static perl binary from relocatable perl binary
+  (https://github.com/skaji/relocatable-perl)
 - add portable git binary
+  (I built this)
+
+Here is an example of how to get information about the symlink
+name and real binary name that we could use when writing an
+executable of form (2).
+
+#include <libgen.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char** argv) {
+  // discriminate command value based on link name
+  printf("Arg#: %d\n",argc);
+  if (argc >= 1) {
+    printf("Link Path: %s\n",argv[0]);
+    char * base = basename(argv[0]);
+    printf("Link Base: %s\n",base);
+  }
+  // discriminate command value based on actual name
+  char path_buffer[PATH_MAX + 1]; 
+  char *actual_path = NULL;
+  actual_path = realpath("/proc/self/exe",path_buffer);
+  if (actual_path != NULL) {
+    printf("Real Path: %s\n",actual_path);
+    char * base = basename(actual_path);
+    printf("Real Base: %s\n",base);
+  }
+  // get directoy the command was invoked from
+  char *wd = (char*) getenv("PWD");
+  if (wd != NULL) {
+    printf("Working Dir: %s\n",wd);
+  }
+  return 0;
+}
