@@ -1,3 +1,11 @@
+# Bugs
+
+- linking fails when a library depends on a another library
+  i.e. some symbols in the library object are defined in another library:
+  in that case, the additional libraries must be specified by hand ---
+  this seems to be the case for static AND dynamic linking
+
+# Enhancements
 - add a mechanism to invoke scripts (i.e. shebang style
   scripts) but with the interpreter at a relative location;
   ideas:
